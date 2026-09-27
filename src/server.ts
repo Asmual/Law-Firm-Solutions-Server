@@ -7,10 +7,7 @@ const server = http.createServer(app);
 
 const startServer = async (): Promise<void> => {
   try {
-    // 1. Connect to Database
-    await connectDB();
-
-    // 2. Start HTTP Listener (0.0.0.0 binds to all network interfaces for Render and cloud VPS)
+    // 1. Start HTTP Listener immediately on 0.0.0.0 for Render health checks
     server.listen(ENV.PORT, "0.0.0.0", () => {
       console.log(`=======================================================`);
       console.log(`⚖️  LAW FIRM SOLUTIONS - SUPREME COURT CHAMBER SERVER`);
@@ -19,6 +16,11 @@ const startServer = async (): Promise<void> => {
       console.log(`🛡️  JWT Auth Secret:   CONFIGURED`);
       console.log(`🌐 Health Endpoint:   http://localhost:${ENV.PORT}/api/v1/health`);
       console.log(`=======================================================`);
+    });
+
+    // 2. Connect to Database asynchronously
+    connectDB().catch((err) => {
+      console.error("[Database] Initial connection issue:", err);
     });
   } catch (error) {
     console.error("Failed to start backend server:", error);
