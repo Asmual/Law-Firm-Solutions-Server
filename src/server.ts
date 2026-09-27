@@ -9,13 +9,10 @@ const startServer = async (): Promise<void> => {
   try {
     // 1. Start HTTP Listener immediately on 0.0.0.0 for Render health checks
     server.listen(ENV.PORT, "0.0.0.0", () => {
-      console.log(`=======================================================`);
-      console.log(`⚖️  LAW FIRM SOLUTIONS - SUPREME COURT CHAMBER SERVER`);
-      console.log(`🚀 Server running on: http://0.0.0.0:${ENV.PORT}`);
-      console.log(`📦 Environment:       ${ENV.NODE_ENV}`);
-      console.log(`🛡️  JWT Auth Secret:   CONFIGURED`);
-      console.log(`🌐 Health Endpoint:   http://localhost:${ENV.PORT}/api/v1/health`);
-      console.log(`=======================================================`);
+      console.log(`Server running on: ${ENV.PORT}`);
+      console.log(` Environment:       ${ENV.NODE_ENV}`);
+      console.log(`  JWT Auth Secret:   CONFIGURED`);
+      console.log(` Health Endpoint:   http://localhost:${ENV.PORT}/api/v1/health`);
     });
 
     // 2. Connect to Database asynchronously

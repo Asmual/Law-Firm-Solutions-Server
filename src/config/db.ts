@@ -8,14 +8,14 @@ export const connectDB = async (): Promise<void> => {
       serverSelectionTimeoutMS: 15000,
     });
 
-    console.log(`[Database] MongoDB Atlas Connected: ${conn.connection.host} (${conn.connection.name})`);
+    console.log(`= MongoDB Successfully Connected!`);
   } catch (error) {
-    console.error("[Database] Connection Error (Will retry in background):", error);
+    console.error("Connection Error (Will retry in background):", error);
   }
 };
 
 mongoose.connection.on("disconnected", () => {
-  console.warn("[Database] MongoDB disconnected. Attempting reconnection...");
+  console.warn("MongoDB disconnected. Attempting reconnection...");
 });
 
 mongoose.connection.on("error", (err) => {
