@@ -44,7 +44,7 @@ const UserSchema = new Schema<IUserDocument>(
     phone: { type: String, default: "" },
     role: {
       type: String,
-      enum: ["admin", "advocate", "associate"],
+      enum: ["admin", "partner", "advocate", "associate"],
       default: "associate",
       index: true,
     },

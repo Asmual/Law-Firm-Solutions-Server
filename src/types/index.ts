@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-export type UserRole = "admin" | "advocate" | "associate";
+export type UserRole = "admin" | "partner" | "advocate" | "associate";
 
 export interface IAuthUser {
   id: string;
