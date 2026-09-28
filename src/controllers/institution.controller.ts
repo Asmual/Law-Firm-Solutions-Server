@@ -75,10 +75,15 @@ export const getInstitutionById = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
+    const cases = await Case.find({ institutionId: id }).sort({ updatedAt: -1 });
+
     sendSuccess({
       res,
       message: "Institution details retrieved.",
-      data: inst,
+      data: {
+        ...inst.toObject(),
+        cases,
+      },
     });
   } catch (error) {
     console.error("[Institution Controller] getInstitutionById Error:", error);
