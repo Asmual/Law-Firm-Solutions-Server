@@ -6,20 +6,25 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import { sendSuccess, sendError } from "../utils/response";
 import { AuthenticatedRequest, UserRole } from "../types";
 import { ENV } from "../config/env";
+import { generateUniqueUsername } from "../utils/username";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
+    const identifier = (email || username || "").toLowerCase().trim();
 
-    if (!email || !password) {
-      sendError({ res, statusCode: 400, message: "Email and password are required." });
+    if (!identifier || !password) {
+      sendError({ res, statusCode: 400, message: "Email or username, and password are required." });
       return;
     }
 
-    const user = await User.findOne({ email: email.toLowerCase().trim() }).select("+passwordHash");
+    // Support login via either email or username
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }],
+    }).select("+passwordHash");
 
     if (!user) {
-      sendError({ res, statusCode: 401, message: "Invalid email or password." });
+      sendError({ res, statusCode: 401, message: "Invalid email/username or password." });
       return;
     }
 
@@ -34,14 +39,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      sendError({ res, statusCode: 401, message: "Invalid email or password." });
+      sendError({ res, statusCode: 401, message: "Invalid email/username or password." });
       return;
     }
 
-    // Generate JWT Tokens
+    // Generate JWT Tokens with 30-day validity
     const tokenPayload = {
       id: user._id.toString(),
       email: user.email,
+      username: user.username,
       role: user.role,
     };
 
@@ -65,12 +71,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       userAgent: req.headers["user-agent"] || "",
     }).catch((err) => console.error("[ActivityLog] Failed to record login log:", err));
 
-    // Set HTTP-Only Cookie
+    // Set HTTP-Only Cookie with 30-day lifetime
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: ENV.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days active session
     });
 
     sendSuccess({
@@ -81,6 +87,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           id: user._id,
           name: user.name,
           email: user.email,
+          username: user.username,
           role: user.role,
           chamberDesignation: user.chamberDesignation,
           associateId: user.associateId,
@@ -114,9 +121,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const salt = await bcrypt.genSalt(ENV.BCRYPT_SALT_ROUNDS);
     const passwordHash = await bcrypt.hash(password, salt);
 
+    // Automatically generate unique username based on user name (e.g. tanvir102)
+    const username = await generateUniqueUsername(name, role, async (candidate) => {
+      const found = await User.findOne({ username: candidate });
+      return !!found;
+    });
+
     const newUser = await User.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
+      username,
       passwordHash,
       role: role as UserRole,
       chamberDesignation: chamberDesignation || "Legal Practitioner",
@@ -128,6 +142,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const tokenPayload = {
       id: newUser._id.toString(),
       email: newUser.email,
+      username: newUser.username,
       role: newUser.role,
     };
 
@@ -158,6 +173,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
           id: newUser._id,
           name: newUser.name,
           email: newUser.email,
+          username: newUser.username,
           role: newUser.role,
           chamberDesignation: newUser.chamberDesignation,
           associateId: newUser.associateId,

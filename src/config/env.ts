@@ -10,7 +10,7 @@ export const ENV = {
     "mongodb+srv://Law-Firm-Solutions:kNhwX5CoMAvt7iim@asmual.4icepzp.mongodb.net/law_firm_solutions?retryWrites=true&w=majority&appName=Asmual",
   JWT_TOKEN_SECRET:
     process.env.JWT_TOKEN_SECRET || "chamber_super_secure_jwt_secret_token_law_firm_solutions_2026",
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "30d",
   JWT_REFRESH_SECRET:
     process.env.JWT_REFRESH_SECRET || "chamber_super_secure_refresh_secret_key_law_firm_2026_bd",
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "30d",

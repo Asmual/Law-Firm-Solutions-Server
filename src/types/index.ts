@@ -6,6 +6,7 @@ export interface IAuthUser {
   id: string;
   name: string;
   email: string;
+  username?: string;
   role: UserRole;
   chamberDesignation?: string;
   associateId?: string;
@@ -20,5 +21,6 @@ export interface AuthenticatedRequest extends Request {
 export interface JwtPayloadData {
   id: string;
   email: string;
+  username?: string;
   role: UserRole;
 }
