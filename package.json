@@ -4,10 +4,10 @@
   "description": "Production REST API server for Supreme Court Law Firm Solutions",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "node api.js && tsx watch src/server.ts",
-    "dev:ts-node": "node api.js && ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "dev:ts-node": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node api.js && node dist/server.js",
+    "start": "node dist/server.js",
     "lint": "tsc --noEmit"
   },
   "engines": {

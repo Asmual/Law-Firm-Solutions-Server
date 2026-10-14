@@ -18,3 +18,9 @@ yarn-error.log*
 Thumbs.db
 
 config.bat
+
+.vscode/
+api.js
+director.js
+.env
+.env.local
